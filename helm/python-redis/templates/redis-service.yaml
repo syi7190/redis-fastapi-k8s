@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: {{ include "python-redis.redisName" . }}
+  labels:
+    {{- include "python-redis.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+
+spec:
+  type: ClusterIP
+
+  selector:
+    {{- include "python-redis.redisSelectorLabels" . | nindent 4 }}
+
+  ports:
+    - name: redis
+      port: {{ .Values.redis.service.port }}
+      targetPort: redis
+      protocol: TCP

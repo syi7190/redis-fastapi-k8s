@@ -1,0 +1,43 @@
+app:
+  replicaCount: 1
+
+  image:
+    repository: python-api
+    tag: "latest"
+    pullPolicy: Never
+
+  containerPort: 8000
+
+  service:
+    type: ClusterIP
+    port: 80
+
+redis:
+  replicaCount: 1
+
+  image:
+    repository: redis
+    tag: "7"
+    pullPolicy: IfNotPresent
+
+  containerPort: 6379
+
+  service:
+    port: 6379
+
+  secret:
+    password: redis-123
+
+  persistence:
+    enabled: true
+    storageClassName: standard
+    accessMode: ReadWriteOnce
+    size: 1Gi
+
+ingress:
+  enabled: true
+  className: nginx
+  host: localhost
+  path: /api(.*)
+  pathType: ImplementationSpecific
+  rewriteTarget: "$1"

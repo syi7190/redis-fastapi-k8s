@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+
+metadata:
+  name: {{ include "python-redis.configMapName" . }}
+  labels:
+    {{- include "python-redis.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: configuration
+
+data:
+  REDIS_HOST: {{ include "python-redis.redisName" . | quote }}
+  REDIS_PORT: {{ .Values.redis.service.port | quote }}

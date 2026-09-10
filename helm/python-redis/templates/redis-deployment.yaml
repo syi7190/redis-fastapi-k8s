@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ include "python-redis.redisName" . }}
+  labels:
+    {{- include "python-redis.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+
+spec:
+  replicas: {{ .Values.redis.replicaCount }}
+
+  selector:
+    matchLabels:
+      {{- include "python-redis.redisSelectorLabels" . | nindent 6 }}
+
+  template:
+    metadata:
+      labels:
+        {{- include "python-redis.redisSelectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: redis
+    
+    spec:
+      containers:
+        - name: redis
+          image: "{{ .Values.redis.image.repository }}:{{ .Values.redis.image.tag }}"
+          imagePullPolicy: {{ .Values.redis.image.pullPolicy }}
+
+          ports:
+            - name: redis
+              containerPort: {{ .Values.redis.containerPort }}
+              protocol: TCP

@@ -1,0 +1,31 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: {{ include "python-redis.ingressName" . }}
+  labels:
+    {{- include "python-redis.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: ingress
+
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: {{ .Values.ingress.rewriteTarget | quote }}
+
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+
+      http:
+        paths:
+          - path: {{ .Values.ingress.path | quote }}
+            pathType: {{ .Values.ingress.pathType }}
+
+            backend:
+              service:
+                name: {{ include "python-redis.appName" . }}
+
+                port:
+                  number: {{ .Values.app.service.port }}
+{{- end }}
